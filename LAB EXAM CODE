@@ -1,0 +1,81 @@
+import React, { useReducer } from "react";
+
+const initialState = [
+  { id: 1, name: "John", status: "Absent" },
+  { id: 2, name: "Mary", status: "Absent" },
+  { id: 3, name: "Alex", status: "Absent" }
+];
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "MARK_PRESENT":
+      return state.map((s) =>
+        s.id === action.id ? { ...s, status: "Present" } : s
+      );
+
+    case "MARK_ABSENT":
+      return state.map((s) =>
+        s.id === action.id ? { ...s, status: "Absent" } : s
+      );
+
+    case "RESET":
+      return state.map((s) => ({ ...s, status: "Absent" }));
+
+    default:
+      return state;
+  }
+}
+
+export default function App() {
+  const [students, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>Student Attendance Tracker</h2>
+
+      <table border="1" cellPadding="10">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {students.map((student) => (
+            <tr key={student.id}>
+              <td>{student.id}</td>
+              <td>{student.name}</td>
+              <td>{student.status}</td>
+              <td>
+                <button
+                  onClick={() =>
+                    dispatch({ type: "MARK_PRESENT", id: student.id })
+                  }
+                >
+                  Mark Present
+                </button>
+
+                <button
+                  onClick={() =>
+                    dispatch({ type: "MARK_ABSENT", id: student.id })
+                  }
+                  style={{ marginLeft: "10px" }}
+                >
+                  Mark Absent
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <br />
+      <button onClick={() => dispatch({ type: "RESET" })}>
+        Reset Attendance
+      </button>
+    </div>
+  );
+}
